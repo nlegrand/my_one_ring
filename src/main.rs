@@ -1,5 +1,7 @@
 use std::fmt;
+use rand::Rng;
 
+#[derive(Clone, Copy)]
 enum FeatDice {
     Number(u8),
     GandalfRune,
@@ -16,6 +18,7 @@ impl fmt::Display for FeatDice {
     }
 }
 
+#[derive(Clone, Copy)]
 enum SuccessDice {
     OutlinedNumber(u8),
     Number(u8),
@@ -32,7 +35,7 @@ impl fmt::Display for SuccessDice {
     }
 }
 
-fn main() {
+fn feat_dice_throw() -> FeatDice {
     let feat_dice = vec![
 	FeatDice::Number(1),
 	FeatDice::Number(2),
@@ -48,6 +51,10 @@ fn main() {
 	FeatDice::EyeofSauron,
     ];
 
+    feat_dice[rand::thread_rng().gen_range(0..=11)]
+}
+
+fn success_dice_throw() -> SuccessDice {
     let success_dice = vec![
 	SuccessDice::OutlinedNumber(1),
 	SuccessDice::OutlinedNumber(2),
@@ -55,8 +62,14 @@ fn main() {
 	SuccessDice::Number(4),
 	SuccessDice::Number(5),
 	SuccessDice::SuccessIcon,
-	];
-    let toto = SuccessDice::Number(4);
-    println!("{}", toto);
-    println!("{} {}",feat_dice[1], success_dice[2]);
+    ];
+
+    success_dice[rand::thread_rng().gen_range(0..=5)]
+}
+
+fn main() {
+    let feat_dice_result = feat_dice_throw();
+    let success_dice_result = success_dice_throw();
+    println!("{}", success_dice_result);
+    println!("{}", feat_dice_result);
 }
