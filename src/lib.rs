@@ -1,6 +1,5 @@
-pub mod throw {
+pub mod dice {
     use std::fmt;
-    use rand::Rng;
     #[derive(Clone, Copy)]
     pub enum FeatDice {
         Number(u8),
@@ -35,7 +34,7 @@ pub mod throw {
         }
     }
 
-    const FEAT_DICE: [FeatDice; 12] = [
+    pub const FEAT_DICE: [FeatDice; 12] = [
 	FeatDice::Number(1),
 	FeatDice::Number(2),
 	FeatDice::Number(3),
@@ -50,11 +49,8 @@ pub mod throw {
 	FeatDice::EyeofSauron,
     ];
     
-    pub fn feat_dice_throw() -> FeatDice {
-        FEAT_DICE[rand::thread_rng().gen_range(0..=11)]
-    }
 
-    const SUCCESS_DICE: [SuccessDice; 6] = [
+    pub const SUCCESS_DICE: [SuccessDice; 6] = [
 	SuccessDice::OutlinedNumber(1),
 	SuccessDice::OutlinedNumber(2),
 	SuccessDice::OutlinedNumber(3),
@@ -62,8 +58,15 @@ pub mod throw {
 	SuccessDice::Number(5),
 	SuccessDice::SuccessIcon,
     ];
+}
 
-    pub fn success_dice_throw() -> SuccessDice {
-        SUCCESS_DICE[rand::thread_rng().gen_range(0..=5)]
+pub mod roll {
+    use rand::Rng;
+    use crate::dice as Tor;
+    pub fn success_dice() -> Tor::SuccessDice {
+        Tor::SUCCESS_DICE[rand::thread_rng().gen_range(0..=5)]
+    }
+    pub fn feat_dice() -> Tor::FeatDice {
+        Tor::FEAT_DICE[rand::thread_rng().gen_range(0..=11)]
     }
 }
