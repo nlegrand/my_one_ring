@@ -35,35 +35,35 @@ pub mod throw {
         }
     }
 
+    const FEAT_DICE: [FeatDice; 12] = [
+	FeatDice::Number(1),
+	FeatDice::Number(2),
+	FeatDice::Number(3),
+	FeatDice::Number(4),
+	FeatDice::Number(5),
+	FeatDice::Number(6),
+	FeatDice::Number(7),
+	FeatDice::Number(8),
+	FeatDice::Number(9),
+	FeatDice::Number(10),
+	FeatDice::GandalfRune,
+	FeatDice::EyeofSauron,
+    ];
+    
     pub fn feat_dice_throw() -> FeatDice {
-        let feat_dice = vec![
-	    FeatDice::Number(1),
-	    FeatDice::Number(2),
-	    FeatDice::Number(3),
-	    FeatDice::Number(4),
-	    FeatDice::Number(5),
-	    FeatDice::Number(6),
-	    FeatDice::Number(7),
-	    FeatDice::Number(8),
-	    FeatDice::Number(9),
-	    FeatDice::Number(10),
-	    FeatDice::GandalfRune,
-	    FeatDice::EyeofSauron,
-        ];
-
-        feat_dice[rand::thread_rng().gen_range(0..=11)]
+        FEAT_DICE[rand::thread_rng().gen_range(0..=11)]
     }
 
-    pub fn success_dice_throw() -> SuccessDice {
-        let success_dice = vec![
-	    SuccessDice::OutlinedNumber(1),
-	    SuccessDice::OutlinedNumber(2),
-	    SuccessDice::OutlinedNumber(3),
-	    SuccessDice::Number(4),
-	    SuccessDice::Number(5),
-	    SuccessDice::SuccessIcon,
-        ];
+    const SUCCESS_DICE: [SuccessDice; 6] = [
+	SuccessDice::OutlinedNumber(1),
+	SuccessDice::OutlinedNumber(2),
+	SuccessDice::OutlinedNumber(3),
+	SuccessDice::Number(4),
+	SuccessDice::Number(5),
+	SuccessDice::SuccessIcon,
+    ];
 
-        success_dice[rand::thread_rng().gen_range(0..=5)]
+    pub fn success_dice_throw() -> SuccessDice {
+        SUCCESS_DICE[rand::thread_rng().gen_range(0..=5)]
     }
 }
