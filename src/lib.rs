@@ -87,7 +87,22 @@ pub mod roll {
 	    die2
 	}
     }
+
+    fn worst_feat_dice(die1: Tor::FeatDice, die2: Tor::FeatDice) -> Tor::FeatDice {
+	println!("Favoured Feat Dice Results: {} and {}", die1, die2);
+	let value1 = dice_value(die1);
+	let value2 = dice_value(die2);
+	if value1 <= value2 {
+	    die1
+	}
+	else {
+	    die2
+	}
+    }
     pub fn favoured_feat_dice() -> Tor::FeatDice {
 	best_feat_dice(feat_dice(), feat_dice())
+    }
+    pub fn ill_favoured_feat_dice() -> Tor::FeatDice {
+	worst_feat_dice(feat_dice(), feat_dice())
     }
 }
