@@ -69,4 +69,25 @@ pub mod roll {
     pub fn feat_dice() -> Tor::FeatDice {
         Tor::FEAT_DICE[rand::thread_rng().gen_range(0..=11)]
     }
+    pub fn dice_value(die: Tor::FeatDice) -> u8 {
+	match die {
+	    Tor::FeatDice::Number(x) => x,
+	    Tor::FeatDice::GandalfRune => 100,
+	    Tor::FeatDice::EyeofSauron => 0,
+	}
+    }
+    fn best_feat_dice(die1: Tor::FeatDice, die2: Tor::FeatDice) -> Tor::FeatDice {
+	println!("Favoured Feat Dice Results: {} and {}", die1, die2);
+	let value1 = dice_value(die1);
+	let value2 = dice_value(die2);
+	if value1 >= value2 {
+	    die1
+	}
+	else {
+	    die2
+	}
+    }
+    pub fn favoured_feat_dice() -> Tor::FeatDice {
+	best_feat_dice(feat_dice(), feat_dice())
+    }
 }
