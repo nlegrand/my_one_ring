@@ -106,3 +106,12 @@ pub mod roll {
 	worst_feat_dice(feat_dice(), feat_dice())
     }
 }
+
+pub mod result {
+    use crate::dice as Tor;
+    use crate::roll as Roll;
+    pub struct Result {
+	feat_dice: (Tor::FeatDice,Option<Tor::FeatDice>),
+	success_dice: Vec<Tor::SuccessDice>,
+    } 
+}
