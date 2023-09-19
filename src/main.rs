@@ -1,4 +1,6 @@
 use my_one_ring::roll as Roll;
+use my_one_ring::dice_pool::Feat as Feat;
+use my_one_ring::dice_pool::DicePool as DicePool;
 
 
 fn main() {
@@ -10,4 +12,11 @@ fn main() {
     println!("Feat dice:{}", feat_dice_result);
     println!("Favoured feat dice:{}", favoured_feat_dice_result);
     println!("Ill favoured feat dice:{}", ill_favoured_feat_dice_result);
+    let dp = DicePool {
+	feat: Feat::Normal,
+	success_dice: 3,
+    };
+    let (fd1, _fd2, sdv) = dp.roll();
+    println!("my feat dice result: {}", fd1);
+    println!("my success dice result: {:?}", sdv);
 }

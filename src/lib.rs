@@ -17,7 +17,7 @@ pub mod dice {
         }
     }
 
-    #[derive(Clone, Copy)]
+    #[derive(Debug, Clone, Copy)]
     pub enum SuccessDice {
         OutlinedNumber(u8),
         Number(u8),
@@ -108,16 +108,26 @@ pub mod roll {
 }
 
 pub mod dice_pool {
+    use std::fmt;
     use crate::dice as Tor;
     use crate::roll as Roll;
     pub enum Feat {
 	Favoured,
 	IllFavoured,
-	NeitherFavoured,
+	Normal,
+    }
+    impl fmt::Display for Feat {
+        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+	    match *self {
+	        Feat::Favoured => write!(f, "Favoured"),
+	        Feat::IllFavoured => write!(f, "Ill favoured"),
+		Feat::Normal => write!(f, "Normal"),
+	    }
+        }
     }
     pub struct DicePool {
-	feat: Feat,
-	success_dice: u8,
+	pub feat: Feat,
+	pub success_dice: u8,
     }
     impl DicePool {
 	fn roll_success_dice(&self) -> Vec<Tor::SuccessDice> {
@@ -131,7 +141,7 @@ pub mod dice_pool {
 	}
 	pub fn roll(&self) -> (Tor::FeatDice,Option<Tor::FeatDice>, Vec<Tor::SuccessDice>) {
 	    match self.feat {
-		Feat::NeitherFavoured => (Roll::feat_dice(), None, self.roll_success_dice()),
+		Feat::Normal => (Roll::feat_dice(), None, self.roll_success_dice()),
 		_ => (Roll::feat_dice(),Some(Roll::feat_dice()), self.roll_success_dice()),
 	    }
 	}
