@@ -107,11 +107,33 @@ pub mod roll {
     }
 }
 
-pub mod result {
+pub mod dice_pool {
     use crate::dice as Tor;
     use crate::roll as Roll;
-    pub struct Result {
-	feat_dice: (Tor::FeatDice,Option<Tor::FeatDice>),
-	success_dice: Vec<Tor::SuccessDice>,
-    } 
+    pub enum Feat {
+	Favoured,
+	IllFavoured,
+	NeitherFavoured,
+    }
+    pub struct DicePool {
+	feat: Feat,
+	success_dice: u8,
+    }
+    impl DicePool {
+	fn roll_success_dice(&self) -> Vec<Tor::SuccessDice> {
+	    let mut v: Vec<Tor::SuccessDice> = Vec::new();
+	    let mut i = self.success_dice ;
+	    while i != 0 {
+		v.push(Roll::success_dice());
+		i -= 1;
+	    }
+	    v
+	}
+	pub fn roll(&self) -> (Tor::FeatDice,Option<Tor::FeatDice>, Vec<Tor::SuccessDice>) {
+	    match self.feat {
+		Feat::NeitherFavoured => (Roll::feat_dice(), None, self.roll_success_dice()),
+		_ => (Roll::feat_dice(),Some(Roll::feat_dice()), self.roll_success_dice()),
+	    }
+	}
+    }
 }
