@@ -111,6 +111,7 @@ pub mod dice_pool {
     use std::fmt;
     use crate::dice as Tor;
     use crate::roll as Roll;
+    #[derive(Clone, Copy)]
     pub enum Feat {
 	Favoured,
 	IllFavoured,
@@ -139,10 +140,10 @@ pub mod dice_pool {
 	    }
 	    v
 	}
-	pub fn roll(&self) -> (Tor::FeatDice,Option<Tor::FeatDice>, Vec<Tor::SuccessDice>) {
+	pub fn roll(&self) -> (Tor::FeatDice,Option<Tor::FeatDice>, Feat, Vec<Tor::SuccessDice>) {
 	    match self.feat {
-		Feat::Normal => (Roll::feat_dice(), None, self.roll_success_dice()),
-		_ => (Roll::feat_dice(),Some(Roll::feat_dice()), self.roll_success_dice()),
+		Feat::Normal => (Roll::feat_dice(), None, self.feat, self.roll_success_dice()),
+		_ => (Roll::feat_dice(),Some(Roll::feat_dice()), self.feat, self.roll_success_dice()),
 	    }
 	}
     }

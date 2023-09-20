@@ -16,7 +16,8 @@ fn main() {
 	feat: Feat::Normal,
 	success_dice: 3,
     };
-    let (fd1, _fd2, sdv) = dp.roll();
+    let (fd1, _fd2, f, sdv) = dp.roll();
     println!("my feat dice result: {}", fd1);
+    println!("is favoured? -> {}", f);
     println!("my success dice result: {:?}", sdv);
 }
