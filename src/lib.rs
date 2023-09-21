@@ -2,9 +2,18 @@ pub mod dice {
     use std::fmt;
     #[derive(Clone, Copy)]
     pub enum FeatDice {
-        Number(u8),
+        Number(i8),
         GandalfRune,
         EyeofSauron,
+    }
+    impl FeatDice {
+        pub fn unpack_values(&self, miserable: bool) -> i8 {
+            match self {
+                FeatDice::Number(a) => *a,
+                FeatDice::GandalfRune => 40,
+                FeatDice::EyeofSauron => if miserable { 0 } else { -40 },
+            }
+        }
     }
 
     impl fmt::Display for FeatDice {
@@ -19,9 +28,24 @@ pub mod dice {
 
     #[derive(Debug, Clone, Copy)]
     pub enum SuccessDice {
-        OutlinedNumber(u8),
-        Number(u8),
+        OutlinedNumber(i8),
+        Number(i8),
         SuccessIcon,
+    }
+    impl SuccessDice {
+        pub fn successes(self) -> i8 {
+            match self {
+                SuccessDice::SuccessIcon => 1,
+                _ => 0,
+            }
+        }
+        pub fn value(&self, weary: bool) -> i8 {
+            match self {
+                SuccessDice::OutlinedNumber(a) => if weary { 0 } else { *a },
+                SuccessDice::Number(a) => *a,
+                SuccessDice::SuccessIcon => 6,
+            }
+        }
     }
 
     impl fmt::Display for SuccessDice {
@@ -69,7 +93,7 @@ pub mod roll {
     pub fn feat_dice() -> Tor::FeatDice {
         Tor::FEAT_DICE[rand::thread_rng().gen_range(0..=11)]
     }
-    pub fn dice_value(die: Tor::FeatDice) -> u8 {
+    pub fn dice_value(die: Tor::FeatDice) -> i8 {
 	match die {
 	    Tor::FeatDice::Number(x) => x,
 	    Tor::FeatDice::GandalfRune => 100,
@@ -107,10 +131,42 @@ pub mod roll {
     }
 }
 
+pub mod result {
+    use crate::dice as Tor;
+    use crate::dice_pool::Feat as Feat;
+    pub struct Raw {
+        feat_dice: Tor::FeatDice,
+        optional_feat_dice: Option<Tor::FeatDice>,
+        feat: Feat,
+        successes: Vec<Tor::SuccessDice>,
+    }
+    struct Computed {
+        result: i8,
+        successes: i8,
+    }
+    impl Raw {
+        fn compute_result(&self) -> Computed {
+            let mut computed = Computed {
+                result: 0,
+                successes: 0,
+            };
+            for die in &self.successes {
+                computed.successes += die.successes();
+            }
+            for die in &self.successes {
+                computed.result += die.value(false); //to be implemented properly
+            }
+            computed
+        }
+        
+    }
+}
+
 pub mod dice_pool {
     use std::fmt;
     use crate::dice as Tor;
     use crate::roll as Roll;
+    use crate::result::Raw as Result;
     #[derive(Clone, Copy)]
     pub enum Feat {
 	Favoured,
@@ -148,3 +204,4 @@ pub mod dice_pool {
 	}
     }
 }
+
