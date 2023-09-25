@@ -145,7 +145,7 @@ pub mod outcome {
         successes: i8,
     }
     impl Raw {
-        fn compute_outcome(&self) -> Computed {
+        fn compute(&self) -> Computed {
             let mut computed = Computed {
                 outcome: 0,
                 successes: 0,
@@ -166,7 +166,6 @@ pub mod dice_pool {
     use std::fmt;
     use crate::dice as Tor;
     use crate::roll as Roll;
-    use crate::outcome::Raw as Outcome;
     #[derive(Clone, Copy)]
     pub enum Feat {
 	Favoured,
