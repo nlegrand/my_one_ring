@@ -1,0 +1,11 @@
+This is mostly a pet project to learn me some Rust. My goal is to make
+a dice roller for the One Ring, 2nd edition, the roleplaying game
+published by FreeLeague.
+
+It’s not usuable right now, anyway my goals are to:
+
+- make a shell to roll dice pools
+- benchmark dice pools results to get empirical probabilities
+- have a nice lib which could be used in other programms
+
+So far I really enjoy programming in Rust.
