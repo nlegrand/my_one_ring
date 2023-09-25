@@ -1,6 +1,6 @@
 pub mod dice {
     use std::fmt;
-    #[derive(Clone, Copy)]
+    #[derive(Debug, Clone, Copy)]
     pub enum FeatDice {
         Number(i8),
         GandalfRune,
@@ -134,13 +134,15 @@ pub mod roll {
 pub mod outcome {
     use crate::dice as Tor;
     use crate::dice_pool::Feat as Feat;
+    #[derive(Debug)]
     pub struct Raw {
-        feat_dice: Tor::FeatDice,
-        optional_feat_dice: Option<Tor::FeatDice>,
-        feat: Feat,
-        successes: Vec<Tor::SuccessDice>,
+        pub feat_dice: Tor::FeatDice,
+        pub optional_feat_dice: Option<Tor::FeatDice>,
+        pub feat: Feat,
+        pub success_dice: Vec<Tor::SuccessDice>,
     }
-    struct Computed {
+    #[derive(Debug)]
+    pub struct Computed {
         outcome: i8,
         successes: i8,
     }
@@ -150,10 +152,10 @@ pub mod outcome {
                 outcome: 0,
                 successes: 0,
             };
-            for die in &self.successes {
+            for die in &self.success_dice {
                 computed.successes += die.successes();
             }
-            for die in &self.successes {
+            for die in &self.success_dice {
                 computed.outcome += die.value(false); //to be implemented properly
             }
             computed
@@ -166,7 +168,8 @@ pub mod dice_pool {
     use std::fmt;
     use crate::dice as Tor;
     use crate::roll as Roll;
-    #[derive(Clone, Copy)]
+    use crate::outcome::Raw as RawOutcome;
+    #[derive(Debug, Clone, Copy)]
     pub enum Feat {
 	Favoured,
 	IllFavoured,
@@ -195,12 +198,23 @@ pub mod dice_pool {
 	    }
 	    v
 	}
-	pub fn roll(&self) -> (Tor::FeatDice,Option<Tor::FeatDice>, Feat, Vec<Tor::SuccessDice>) {
+	pub fn roll(&self) -> RawOutcome {
 	    match self.feat {
-		Feat::Normal => (Roll::feat_dice(), None, self.feat, self.roll_success_dice()),
-		_ => (Roll::feat_dice(),Some(Roll::feat_dice()), self.feat, self.roll_success_dice()),
+		Feat::Normal => RawOutcome {
+		    feat_dice: Roll::feat_dice(),
+		    optional_feat_dice: None,
+		    feat: self.feat,
+		    success_dice: self.roll_success_dice(),
+		},
+		_ => RawOutcome {
+		    feat_dice: Roll::feat_dice(),
+		    optional_feat_dice: Some(Roll::feat_dice()),
+		    feat: self.feat,
+		    success_dice: self.roll_success_dice(),
+		},
 	    }
 	}
     }
 }
+
 

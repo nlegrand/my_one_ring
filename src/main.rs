@@ -16,8 +16,12 @@ fn main() {
 	feat: Feat::Normal,
 	success_dice: 3,
     };
-    let (fd1, _fd2, f, sdv) = dp.roll();
-    println!("my feat dice result: {}", fd1);
-    println!("is favoured? -> {}", f);
-    println!("my success dice result: {:?}", sdv);
+    let outcome = dp.roll();
+    println!("my outcome: {:?}", outcome);
+    let dpf = DicePool {
+	feat: Feat::Favoured,
+	success_dice: 2,
+    };
+    let favoured_outcome = dpf.roll();
+    println!("my favoured outcome: {:?}", favoured_outcome);
 }
