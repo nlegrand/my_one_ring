@@ -131,7 +131,7 @@ pub mod roll {
     }
 }
 
-pub mod result {
+pub mod outcome {
     use crate::dice as Tor;
     use crate::dice_pool::Feat as Feat;
     pub struct Raw {
@@ -141,20 +141,20 @@ pub mod result {
         successes: Vec<Tor::SuccessDice>,
     }
     struct Computed {
-        result: i8,
+        outcome: i8,
         successes: i8,
     }
     impl Raw {
-        fn compute_result(&self) -> Computed {
+        fn compute_outcome(&self) -> Computed {
             let mut computed = Computed {
-                result: 0,
+                outcome: 0,
                 successes: 0,
             };
             for die in &self.successes {
                 computed.successes += die.successes();
             }
             for die in &self.successes {
-                computed.result += die.value(false); //to be implemented properly
+                computed.outcome += die.value(false); //to be implemented properly
             }
             computed
         }
@@ -166,7 +166,7 @@ pub mod dice_pool {
     use std::fmt;
     use crate::dice as Tor;
     use crate::roll as Roll;
-    use crate::result::Raw as Result;
+    use crate::outcome::Raw as Outcome;
     #[derive(Clone, Copy)]
     pub enum Feat {
 	Favoured,
