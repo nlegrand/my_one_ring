@@ -22,6 +22,8 @@ fn main() {
 	feat: Feat::Favoured,
 	success_dice: 2,
     };
+    let computed_result = outcome.compute(false);
+    println!("my computed result: {:?}", computed_result);
     let favoured_outcome = dpf.roll();
     println!("my favoured outcome: {:?}", favoured_outcome);
 }

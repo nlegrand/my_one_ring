@@ -143,12 +143,16 @@ pub mod outcome {
     }
     #[derive(Debug)]
     pub struct Computed {
+        automatic_success: bool,
+        automatic_failure: bool,
         outcome: i8,
         successes: i8,
     }
     impl Raw {
-        fn compute(&self) -> Computed {
+        pub fn compute(&self, weary: bool) -> Computed {
             let mut computed = Computed {
+                automatic_success: false,
+                automatic_failure: false,
                 outcome: 0,
                 successes: 0,
             };
@@ -156,11 +160,28 @@ pub mod outcome {
                 computed.successes += die.successes();
             }
             for die in &self.success_dice {
-                computed.outcome += die.value(false); //to be implemented properly
+                computed.outcome += die.value(weary);
             }
-            computed
+            let feat_dice: Tor::FeatDice;
+            match self.feat {
+                Feat::Normal => {
+                    feat_dice = self.feat_dice;
+                },
+                _ => {
+                    feat_dice = self.feat_dice;
+                } ,
+            }
+            match feat_dice {
+                Tor::FeatDice::Number(a) => {
+                    computed.outcome += a;
+                },
+                Tor::FeatDice::GandalfRune => {
+                    computed.automatic_success = true;
+                },
+                Tor::FeatDice::EyeofSauron => {}, //should handle automatic failure in the future
+            }
+        computed
         }
-        
     }
 }
 
