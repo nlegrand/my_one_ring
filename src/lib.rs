@@ -1,5 +1,8 @@
 pub mod dice {
+
     use std::fmt;
+    use rand::Rng;
+
     #[derive(Debug, Clone, Copy)]
     pub enum FeatDice {
         Number(i8),
@@ -82,25 +85,23 @@ pub mod dice {
 	SuccessDice::Number(5),
 	SuccessDice::SuccessIcon,
     ];
-}
 
-pub mod roll {
-    use rand::Rng;
-    use crate::dice as Tor;
-    pub fn success_dice() -> Tor::SuccessDice {
-        Tor::SUCCESS_DICE[rand::thread_rng().gen_range(0..=5)]
+
+
+    pub fn success_dice() -> SuccessDice {
+        SUCCESS_DICE[rand::thread_rng().gen_range(0..=5)]
     }
-    pub fn feat_dice() -> Tor::FeatDice {
-        Tor::FEAT_DICE[rand::thread_rng().gen_range(0..=11)]
+    pub fn feat_dice() -> FeatDice {
+        FEAT_DICE[rand::thread_rng().gen_range(0..=11)]
     }
-    pub fn dice_value(die: Tor::FeatDice) -> i8 {
+    pub fn dice_value(die: FeatDice) -> i8 {
 	match die {
-	    Tor::FeatDice::Number(x) => x,
-	    Tor::FeatDice::GandalfRune => 100,
-	    Tor::FeatDice::EyeofSauron => 0,
+	    FeatDice::Number(x) => x,
+	    FeatDice::GandalfRune => 100,
+	    FeatDice::EyeofSauron => 0,
 	}
     }
-    fn best_feat_dice(die1: Tor::FeatDice, die2: Tor::FeatDice) -> Tor::FeatDice {
+    fn best_feat_dice(die1: FeatDice, die2: FeatDice) -> FeatDice {
 	println!("Favoured Feat Dice Results: {} and {}", die1, die2);
 	let value1 = dice_value(die1);
 	let value2 = dice_value(die2);
@@ -112,7 +113,7 @@ pub mod roll {
 	}
     }
 
-    fn worst_feat_dice(die1: Tor::FeatDice, die2: Tor::FeatDice) -> Tor::FeatDice {
+    fn worst_feat_dice(die1: FeatDice, die2: FeatDice) -> FeatDice {
 	println!("Favoured Feat Dice Results: {} and {}", die1, die2);
 	let value1 = dice_value(die1);
 	let value2 = dice_value(die2);
@@ -123,23 +124,20 @@ pub mod roll {
 	    die2
 	}
     }
-    pub fn favoured_feat_dice() -> Tor::FeatDice {
+    pub fn favoured_feat_dice() -> FeatDice {
 	best_feat_dice(feat_dice(), feat_dice())
     }
-    pub fn ill_favoured_feat_dice() -> Tor::FeatDice {
+    pub fn ill_favoured_feat_dice() -> FeatDice {
 	worst_feat_dice(feat_dice(), feat_dice())
     }
-}
 
-pub mod outcome {
-    use crate::dice as Tor;
-    use crate::dice_pool::Feat as Feat;
+
     #[derive(Debug)]
     pub struct Raw {
-        pub feat_dice: Tor::FeatDice,
-        pub optional_feat_dice: Option<Tor::FeatDice>,
+        pub feat_dice: FeatDice,
+        pub optional_feat_dice: Option<FeatDice>,
         pub feat: Feat,
-        pub success_dice: Vec<Tor::SuccessDice>,
+        pub success_dice: Vec<SuccessDice>,
     }
     #[derive(Debug)]
     pub struct Computed {
@@ -152,6 +150,22 @@ pub mod outcome {
         pub weary: bool,
         pub miserable: bool,
     }
+    pub const NO_CONDITIONS: Condition = Condition {
+        weary: false,
+        miserable: false,
+    };
+    pub const WEARY: Condition = Condition {
+        weary: true,
+        miserable: false,
+    };
+    pub const MISERABLE: Condition = Condition {
+        weary: false,
+        miserable: true,
+    };
+    pub const WEARY_AND_MISERABLE: Condition = Condition {
+        weary: true,
+        miserable: true,
+    };
     impl Raw {
         pub fn compute(&self, condition: Condition) -> Computed {
             let mut computed = Computed {
@@ -166,7 +180,7 @@ pub mod outcome {
             for die in &self.success_dice {
                 computed.outcome += die.value(condition.weary);
             }
-            let feat_dice: Tor::FeatDice;
+            let feat_dice: FeatDice;
             match self.feat {
                 Feat::Normal => {
                     feat_dice = self.feat_dice;
@@ -176,13 +190,13 @@ pub mod outcome {
                 } ,
             }
             match feat_dice {
-                Tor::FeatDice::Number(a) => {
+                FeatDice::Number(a) => {
                     computed.outcome += a;
                 },
-                Tor::FeatDice::GandalfRune => {
+                FeatDice::GandalfRune => {
                     computed.automatic_success = true;
                 },
-                Tor::FeatDice::EyeofSauron => {
+                FeatDice::EyeofSauron => {
                     if condition.miserable {
                         computed.automatic_failure = true;
                     }
@@ -191,13 +205,8 @@ pub mod outcome {
         computed
         }
     }
-}
 
-pub mod dice_pool {
-    use std::fmt;
-    use crate::dice as Tor;
-    use crate::roll as Roll;
-    use crate::outcome::Raw as RawOutcome;
+
     #[derive(Debug, Clone, Copy)]
     pub enum Feat {
 	Favoured,
@@ -218,26 +227,26 @@ pub mod dice_pool {
 	pub success_dice: u8,
     }
     impl DicePool {
-	fn roll_success_dice(&self) -> Vec<Tor::SuccessDice> {
-	    let mut v: Vec<Tor::SuccessDice> = Vec::new();
+	fn roll_success_dice(&self) -> Vec<SuccessDice> {
+	    let mut v: Vec<SuccessDice> = Vec::new();
 	    let mut i = self.success_dice ;
 	    while i != 0 {
-		v.push(Roll::success_dice());
+		v.push(success_dice());
 		i -= 1;
 	    }
 	    v
 	}
-	pub fn roll(&self) -> RawOutcome {
+	pub fn roll(&self) -> Raw {
 	    match self.feat {
-		Feat::Normal => RawOutcome {
-		    feat_dice: Roll::feat_dice(),
+		Feat::Normal => Raw {
+		    feat_dice: feat_dice(),
 		    optional_feat_dice: None,
 		    feat: self.feat,
 		    success_dice: self.roll_success_dice(),
 		},
-		_ => RawOutcome {
-		    feat_dice: Roll::feat_dice(),
-		    optional_feat_dice: Some(Roll::feat_dice()),
+		_ => Raw {
+		    feat_dice: feat_dice(),
+		    optional_feat_dice: Some(feat_dice()),
 		    feat: self.feat,
 		    success_dice: self.roll_success_dice(),
 		},
