@@ -1,6 +1,7 @@
 use my_one_ring::roll as Roll;
 use my_one_ring::dice_pool::Feat as Feat;
 use my_one_ring::dice_pool::DicePool as DicePool;
+use my_one_ring::outcome::Condition as Condition;
 
 
 fn main() {
@@ -16,13 +17,17 @@ fn main() {
 	feat: Feat::Normal,
 	success_dice: 3,
     };
+    let condition = Condition {
+        weary: true,
+        miserable: true,
+    };
     let outcome = dp.roll();
     println!("my outcome: {:?}", outcome);
     let dpf = DicePool {
 	feat: Feat::Favoured,
 	success_dice: 2,
     };
-    let computed_result = outcome.compute(false);
+    let computed_result = outcome.compute(condition);
     println!("my computed result: {:?}", computed_result);
     let favoured_outcome = dpf.roll();
     println!("my favoured outcome: {:?}", favoured_outcome);

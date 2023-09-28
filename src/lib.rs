@@ -148,8 +148,12 @@ pub mod outcome {
         outcome: i8,
         successes: i8,
     }
+    pub struct Condition {
+        pub weary: bool,
+        pub miserable: bool,
+    }
     impl Raw {
-        pub fn compute(&self, weary: bool) -> Computed {
+        pub fn compute(&self, condition: Condition) -> Computed {
             let mut computed = Computed {
                 automatic_success: false,
                 automatic_failure: false,
@@ -160,7 +164,7 @@ pub mod outcome {
                 computed.successes += die.successes();
             }
             for die in &self.success_dice {
-                computed.outcome += die.value(weary);
+                computed.outcome += die.value(condition.weary);
             }
             let feat_dice: Tor::FeatDice;
             match self.feat {
@@ -178,7 +182,11 @@ pub mod outcome {
                 Tor::FeatDice::GandalfRune => {
                     computed.automatic_success = true;
                 },
-                Tor::FeatDice::EyeofSauron => {}, //should handle automatic failure in the future
+                Tor::FeatDice::EyeofSauron => {
+                    if condition.miserable {
+                        computed.automatic_failure = true;
+                    }
+                },
             }
         computed
         }
