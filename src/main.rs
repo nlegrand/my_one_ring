@@ -1,5 +1,34 @@
 use my_one_ring::dice as MorDice;
 
+use clap::{Parser};
+
+#[derive(Parser)]
+#[command(author, version, about, long_about = None)]
+struct Cli {
+
+    /// How many success dice
+    #[arg(short, long, value_name = "DICE")]
+    success_dice: u8,
+
+    /// The roll is favoured
+    #[arg(short, long, action = clap::ArgAction::SetTrue)]
+    favoured: bool,
+
+    /// The roll is ill-favoured
+    #[arg(short, long, action = clap::ArgAction::SetTrue)]
+    ill_favoured: bool,
+
+    /// The character is weary
+    #[arg(short, long, action = clap::ArgAction::SetTrue)]
+    weary: bool,
+
+    /// The character is miserable
+    #[arg(short, long, action = clap::ArgAction::SetTrue)]
+    miserable: bool,
+
+}
+
+
 fn main() {
     let feat_dice_result = MorDice::feat_dice();
     let success_dice_result = MorDice::success_dice();
@@ -23,4 +52,15 @@ fn main() {
     println!("my computed result: {:?}", computed_result);
     let favoured_outcome = dpf.roll();
     println!("my favoured outcome: {:?}", favoured_outcome);
+
+    let cli = Cli::parse();
+
+    let sd = cli.success_dice;
+
+    let dp2 = MorDice::DicePool {
+	feat: MorDice::Feat::Normal,
+	success_dice: sd,
+    };
+    let outcome2 = dp2.roll();
+    println!("my outcome2: {:?}", outcome2);
 }
