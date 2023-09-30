@@ -141,10 +141,11 @@ pub mod dice {
     }
     #[derive(Debug)]
     pub struct Computed {
-        automatic_success: bool,
-        automatic_failure: bool,
-        outcome: i8,
-        successes: i8,
+        pub automatic_success: bool, //could remove pub if pp where
+ // defined as an impl of Computed and not in main.rs
+        pub automatic_failure: bool,
+        pub outcome: i8,
+        pub successes: i8,
     }
     pub struct Condition {
         pub weary: bool,

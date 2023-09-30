@@ -63,10 +63,10 @@ fn main() {
     };
     let outcome2 = dp2.roll();
     println!("my outcome2: {:?}", outcome2);
-    pp_outcome(favoured_outcome);
+    pp_outcome(favoured_outcome, MorDice::NO_CONDITIONS);
 }
 
-fn pp_outcome(outcome: MorDice::Raw) {
+fn pp_outcome(outcome: MorDice::Raw, condition: MorDice::Condition) {
     match outcome.feat {
 	MorDice::Feat::Normal => {
 	    println!("Feat dice: {}", outcome.feat_dice);
@@ -82,7 +82,7 @@ fn pp_outcome(outcome: MorDice::Raw) {
 	},
     }
     print!("Success dice: ");
-    let mut success_dice = outcome.success_dice.into_iter().peekable();
+    let mut success_dice = outcome.success_dice.clone().into_iter().peekable();
     while let Some(die) = success_dice.next()  {
 	if success_dice.peek().is_none() {
             println!("{}.", die);
@@ -91,4 +91,12 @@ fn pp_outcome(outcome: MorDice::Raw) {
 	    print!("{}, ", die);
 	}
     }
+    let computed = outcome.compute(condition);
+    if computed.automatic_success {
+	println!("Automatic success!!!");
+    }
+    if computed.automatic_failure {
+	println!("Automatic failure!!!");
+    }
+    println!("The result is {} with {} success(es)", computed.outcome, computed.successes);
 }
