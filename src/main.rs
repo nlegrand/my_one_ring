@@ -81,4 +81,14 @@ fn pp_outcome(outcome: MorDice::Raw) {
 	    println!("Feat dice ({}): {}, {}", outcome.feat, outcome.feat_dice, o_feat_dice)
 	},
     }
+    print!("Success dice: ");
+    let mut success_dice = outcome.success_dice.into_iter().peekable();
+    while let Some(die) = success_dice.next()  {
+	if success_dice.peek().is_none() {
+            println!("{}.", die);
+	}
+	else {
+	    print!("{}, ", die);
+	}
+    }
 }
