@@ -63,4 +63,22 @@ fn main() {
     };
     let outcome2 = dp2.roll();
     println!("my outcome2: {:?}", outcome2);
+    pp_outcome(favoured_outcome);
+}
+
+fn pp_outcome(outcome: MorDice::Raw) {
+    match outcome.feat {
+	MorDice::Feat::Normal => {
+	    println!("Feat dice: {}", outcome.feat_dice);
+	},
+	_ => {
+	    let o_feat_dice = match outcome.optional_feat_dice {
+		Some(a) => a,
+		None => MorDice::FeatDice::Number(100), // should not
+ // happen the unusually high number should suggest something fishy is
+ // happening.
+	    };
+	    println!("Feat dice ({}): {}, {}", outcome.feat, outcome.feat_dice, o_feat_dice)
+	},
+    }
 }
