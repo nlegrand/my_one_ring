@@ -168,6 +168,19 @@ pub mod dice {
         miserable: true,
     };
     impl Raw {
+	fn pick_feat_dice(&self, feat: Feat, fd1: FeatDice, fd2: FeatDice) -> FeatDice {
+	    match feat {
+		Feat::Normal => { // should not happen
+		    fd1
+		},
+		Feat::Favoured => {
+		    best_feat_dice(fd1, fd2)
+		}
+		Feat::IllFavoured => {
+		    worst_feat_dice(fd1, fd2)
+		}
+	    }
+	}
         pub fn compute(&self, condition: Condition) -> Computed {
             let mut computed = Computed {
                 automatic_success: false,
@@ -187,7 +200,14 @@ pub mod dice {
                     feat_dice = self.feat_dice;
                 },
                 _ => {
-                    feat_dice = self.feat_dice;
+		    match self.optional_feat_dice {
+			Some(a) => {
+			    feat_dice = self.pick_feat_dice(self.feat, self.feat_dice, a)
+			},
+			None => { //Should not happen so pull a weird result
+			    feat_dice = FeatDice::Number(100);
+			},
+		    }
                 } ,
             }
             match feat_dice {
