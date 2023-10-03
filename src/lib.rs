@@ -135,8 +135,8 @@ pub mod dice {
     #[derive(Debug)]
     pub struct Raw {
         pub feat_dice: FeatDice,
-        pub optional_feat_dice: Option<FeatDice>,
-        pub feat: Feat,
+        pub second_feat_dice: Option<FeatDice>,
+        pub feat_status: FeatStatus,
         pub success_dice: Vec<SuccessDice>,
     }
     #[derive(Debug)]
@@ -168,16 +168,19 @@ pub mod dice {
         miserable: true,
     };
     impl Raw {
-	fn pick_feat_dice(&self, feat: Feat, fd1: FeatDice, fd2: FeatDice) -> FeatDice {
-	    match feat {
-		Feat::Normal => { // should not happen
-		    fd1
+	fn pick_feat_dice(&self) -> FeatDice {
+	    match self.second_feat_dice {
+		None => {
+		    self.feat_dice
 		},
-		Feat::Favoured => {
-		    best_feat_dice(fd1, fd2)
-		}
-		Feat::IllFavoured => {
-		    worst_feat_dice(fd1, fd2)
+		Some(second_feat_dice) => {
+                    match self.feat_status {
+                        FeatStatus::Favoured => 
+		            best_feat_dice(self.feat_dice, second_feat_dice),
+                        FeatStatus::IllFavoured =>
+		            worst_feat_dice(self.feat_dice, second_feat_dice),
+                        FeatStatus::Normal => panic!("Second feat dice present while FeatDiceStatus is Normal")
+                    }
 		}
 	    }
 	}
@@ -194,23 +197,8 @@ pub mod dice {
             for die in &self.success_dice {
                 computed.outcome += die.value(condition.weary);
             }
-            let feat_dice: FeatDice;
-            match self.feat {
-                Feat::Normal => {
-                    feat_dice = self.feat_dice;
-                },
-                _ => {
-		    match self.optional_feat_dice {
-			Some(a) => {
-			    feat_dice = self.pick_feat_dice(self.feat, self.feat_dice, a)
-			},
-			None => { //Should not happen so pull a weird result
-			    feat_dice = FeatDice::Number(100);
-			},
-		    }
-                } ,
-            }
-            match feat_dice {
+            let picked_feat_dice = self.pick_feat_dice();
+            match picked_feat_dice {
                 FeatDice::Number(a) => {
                     computed.outcome += a;
                 },
@@ -226,25 +214,24 @@ pub mod dice {
         computed
         }
     }
-
-
     #[derive(Debug, Clone, Copy)]
-    pub enum Feat {
+    pub enum FeatStatus {
 	Favoured,
 	IllFavoured,
 	Normal,
     }
-    impl fmt::Display for Feat {
+    impl fmt::Display for FeatStatus {
         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 	    match *self {
-	        Feat::Favoured => write!(f, "Favoured"),
-	        Feat::IllFavoured => write!(f, "Ill favoured"),
-		Feat::Normal => write!(f, "Normal"),
+	        FeatStatus::Favoured => write!(f, "Favoured"),
+	        FeatStatus::IllFavoured => write!(f, "Ill favoured"),
+		FeatStatus::Normal => write!(f, "Normal"),
 	    }
         }
     }
+
     pub struct DicePool {
-	pub feat: Feat,
+	pub feat_status: FeatStatus,
 	pub success_dice: u8,
     }
     impl DicePool {
@@ -258,17 +245,17 @@ pub mod dice {
 	    v
 	}
 	pub fn roll(&self) -> Raw {
-	    match self.feat {
-		Feat::Normal => Raw {
+	    match self.feat_status {
+		FeatStatus::Normal => Raw {
 		    feat_dice: feat_dice(),
-		    optional_feat_dice: None,
-		    feat: self.feat,
+		    second_feat_dice: None,
+		    feat_status: self.feat_status,
 		    success_dice: self.roll_success_dice(),
 		},
 		_ => Raw {
 		    feat_dice: feat_dice(),
-		    optional_feat_dice: Some(feat_dice()),
-		    feat: self.feat,
+		    second_feat_dice: Some(feat_dice()),
+		    feat_status: self.feat_status,
 		    success_dice: self.roll_success_dice(),
 		},
 	    }

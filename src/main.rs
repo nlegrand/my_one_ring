@@ -39,13 +39,13 @@ fn main() {
     println!("Favoured feat dice:{}", favoured_feat_dice_result);
     println!("Ill favoured feat dice:{}", ill_favoured_feat_dice_result);
     let dp = MorDice::DicePool {
-	feat: MorDice::Feat::Normal,
+	feat_status: MorDice::FeatStatus::Normal,
 	success_dice: 3,
     };
     let outcome = dp.roll();
     println!("my outcome: {:?}", outcome);
     let dpf = MorDice::DicePool {
-	feat: MorDice::Feat::Favoured,
+	feat_status: MorDice::FeatStatus::Favoured,
 	success_dice: 2,
     };
     let computed_result = outcome.compute(MorDice::WEARY_AND_MISERABLE);
@@ -58,7 +58,7 @@ fn main() {
     let sd = cli.success_dice;
 
     let dp2 = MorDice::DicePool {
-	feat: MorDice::Feat::Normal,
+	feat_status: MorDice::FeatStatus::Normal,
 	success_dice: sd,
     };
     let outcome2 = dp2.roll();
@@ -67,18 +67,18 @@ fn main() {
 }
 
 fn pp_outcome(outcome: MorDice::Raw, condition: MorDice::Condition) {
-    match outcome.feat {
-	MorDice::Feat::Normal => {
+    match outcome.feat_status {
+	MorDice::FeatStatus::Normal => {
 	    println!("Feat dice: {}", outcome.feat_dice);
 	},
 	_ => {
-	    let o_feat_dice = match outcome.optional_feat_dice {
+	    let o_feat_dice = match outcome.second_feat_dice {
 		Some(a) => a,
 		None => MorDice::FeatDice::Number(100), // should not
  // happen the unusually high number should suggest something fishy is
  // happening.
 	    };
-	    println!("Feat dice ({}): {}, {}", outcome.feat, outcome.feat_dice, o_feat_dice)
+	    println!("Feat dice ({}): {}, {}", outcome.feat_status, outcome.feat_dice, o_feat_dice)
 	},
     }
     print!("Success dice: ");
