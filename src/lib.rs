@@ -56,7 +56,7 @@ pub mod dice {
 	    match *self {
 	        SuccessDice::OutlinedNumber(i) => write!(f, "{}", i),
 	        SuccessDice::Number(i) => write!(f, "{}", i),
-	        SuccessDice::SuccessIcon => write!(f, "Success icon"),
+	        SuccessDice::SuccessIcon => write!(f, "6 (Success icon)"),
 	    }
         }
     }
@@ -75,7 +75,7 @@ pub mod dice {
 	FeatDice::GandalfRune,
 	FeatDice::EyeofSauron,
     ];
-    
+
 
     pub const SUCCESS_DICE: [SuccessDice; 6] = [
 	SuccessDice::OutlinedNumber(1),
@@ -102,7 +102,6 @@ pub mod dice {
 	}
     }
     fn best_feat_dice(die1: FeatDice, die2: FeatDice) -> FeatDice {
-	println!("Favoured Feat Dice Results: {} and {}", die1, die2);
 	let value1 = dice_value(die1);
 	let value2 = dice_value(die2);
 	if value1 >= value2 {
@@ -114,7 +113,6 @@ pub mod dice {
     }
 
     fn worst_feat_dice(die1: FeatDice, die2: FeatDice) -> FeatDice {
-	println!("Favoured Feat Dice Results: {} and {}", die1, die2);
 	let value1 = dice_value(die1);
 	let value2 = dice_value(die2);
 	if value1 <= value2 {
@@ -147,6 +145,7 @@ pub mod dice {
         pub outcome: i8,
         pub successes: i8,
     }
+    #[derive(Debug)]
     pub struct Condition {
         pub weary: bool,
         pub miserable: bool,
@@ -175,7 +174,7 @@ pub mod dice {
 		},
 		Some(second_feat_dice) => {
                     match self.feat_status {
-                        FeatStatus::Favoured => 
+                        FeatStatus::Favoured =>
 		            best_feat_dice(self.feat_dice, second_feat_dice),
                         FeatStatus::IllFavoured =>
 		            worst_feat_dice(self.feat_dice, second_feat_dice),
@@ -262,5 +261,3 @@ pub mod dice {
 	}
     }
 }
-
-

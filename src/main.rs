@@ -42,6 +42,26 @@ fn main() {
     else {
         MorDice::FeatStatus::Normal
     };
+    if cfg!(debug_assertions) {
+        println!("DEBUG feat status: {:?}", feat_status);
+    }
+
+
+    let condition = if cli.weary && cli.miserable {
+         MorDice::WEARY_AND_MISERABLE
+    }
+    else if cli.weary {
+        MorDice::WEARY
+    }
+    else if cli.miserable {
+        MorDice::MISERABLE
+    }
+    else {
+        MorDice::NO_CONDITIONS
+    };
+    if cfg!(debug_assertions) {
+        println!("DEBUG condition: {:?}", condition);
+    }
 
     let dp = MorDice::DicePool {
 	feat_status: feat_status,
@@ -49,12 +69,18 @@ fn main() {
     };
     let outcome = dp.roll();
     if cfg!(debug_assertions) {
-        println!("Debug, raw outcome: {:?}", outcome);
+        println!("DEBUG raw outcome: {:?}", outcome);
     }
-    pp_outcome(outcome, MorDice::NO_CONDITIONS);
+    pp_outcome(outcome, condition);
 }
 
 fn pp_outcome(outcome: MorDice::Raw, condition: MorDice::Condition) {
+    if condition.weary {
+        println!("Condition: weary");
+    }
+    if condition.miserable {
+        println!("Condition: miserable");
+    }
     match outcome.feat_status {
 	MorDice::FeatStatus::Normal => {
 	    println!("Feat dice: {}", outcome.feat_dice);
