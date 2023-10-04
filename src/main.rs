@@ -11,11 +11,11 @@ struct Cli {
     success_dice: u8,
 
     /// The roll is favoured
-    #[arg(short, long, action = clap::ArgAction::SetTrue)]
+    #[arg(short, long, action = clap::ArgAction::SetTrue, group="feat_status")]
     favoured: bool,
 
     /// The roll is ill-favoured
-    #[arg(short, long, action = clap::ArgAction::SetTrue)]
+    #[arg(short, long, action = clap::ArgAction::SetTrue, group="feat_status")]
     ill_favoured: bool,
 
     /// The character is weary
