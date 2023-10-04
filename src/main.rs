@@ -30,40 +30,28 @@ struct Cli {
 
 
 fn main() {
-    let feat_dice_result = MorDice::feat_dice();
-    let success_dice_result = MorDice::success_dice();
-    let favoured_feat_dice_result = MorDice::favoured_feat_dice();
-    let ill_favoured_feat_dice_result = MorDice::ill_favoured_feat_dice();
-    println!("Success dice: {}", success_dice_result);
-    println!("Feat dice:{}", feat_dice_result);
-    println!("Favoured feat dice:{}", favoured_feat_dice_result);
-    println!("Ill favoured feat dice:{}", ill_favoured_feat_dice_result);
-    let dp = MorDice::DicePool {
-	feat_status: MorDice::FeatStatus::Normal,
-	success_dice: 3,
-    };
-    let outcome = dp.roll();
-    println!("my outcome: {:?}", outcome);
-    let dpf = MorDice::DicePool {
-	feat_status: MorDice::FeatStatus::Favoured,
-	success_dice: 2,
-    };
-    let computed_result = outcome.compute(MorDice::WEARY_AND_MISERABLE);
-    println!("my computed result: {:?}", computed_result);
-    let favoured_outcome = dpf.roll();
-    println!("my favoured outcome: {:?}", favoured_outcome);
 
     let cli = Cli::parse();
-
     let sd = cli.success_dice;
+    let feat_status = if cli.favoured {
+        MorDice::FeatStatus::Favoured
+    }
+    else if cli.ill_favoured {
+        MorDice::FeatStatus::IllFavoured
+    }
+    else {
+        MorDice::FeatStatus::Normal
+    };
 
-    let dp2 = MorDice::DicePool {
-	feat_status: MorDice::FeatStatus::Normal,
+    let dp = MorDice::DicePool {
+	feat_status: feat_status,
 	success_dice: sd,
     };
-    let outcome2 = dp2.roll();
-    println!("my outcome2: {:?}", outcome2);
-    pp_outcome(favoured_outcome, MorDice::NO_CONDITIONS);
+    let outcome = dp.roll();
+    if cfg!(debug_assertions) {
+        println!("Debug, raw outcome: {:?}", outcome);
+    }
+    pp_outcome(outcome, MorDice::NO_CONDITIONS);
 }
 
 fn pp_outcome(outcome: MorDice::Raw, condition: MorDice::Condition) {
@@ -74,9 +62,7 @@ fn pp_outcome(outcome: MorDice::Raw, condition: MorDice::Condition) {
 	_ => {
 	    let o_feat_dice = match outcome.second_feat_dice {
 		Some(a) => a,
-		None => MorDice::FeatDice::Number(100), // should not
- // happen the unusually high number should suggest something fishy is
- // happening.
+		None => panic!("Favoured or ill-favoured roles should have a second feat dice"),
 	    };
 	    println!("Feat dice ({}): {}, {}", outcome.feat_status, outcome.feat_dice, o_feat_dice)
 	},
