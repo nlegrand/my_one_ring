@@ -26,6 +26,9 @@ struct Cli {
     #[arg(short, long, action = clap::ArgAction::SetTrue)]
     miserable: bool,
 
+    /// Simulate one million roll
+    #[arg(long, action = clap::ArgAction::SetTrue)]
+    simulation: bool,
 }
 
 
@@ -62,16 +65,21 @@ fn main() {
     if cfg!(debug_assertions) {
         println!("DEBUG condition: {:?}", condition);
     }
-
     let dp = MorDice::DicePool {
 	feat_status: feat_status,
 	success_dice: sd,
     };
-    let outcome = dp.roll();
-    if cfg!(debug_assertions) {
-        println!("DEBUG raw outcome: {:?}", outcome);
+    if cli.simulation {
+        let sim_outcome = dp.simulation(condition);
+        println!("{:?}", sim_outcome);
     }
-    pp_outcome(outcome, condition);
+    else {
+        let outcome = dp.roll();
+        if cfg!(debug_assertions) {
+            println!("DEBUG raw outcome: {:?}", outcome);
+        }
+        pp_outcome(outcome, condition);
+    }
 }
 
 fn pp_outcome(outcome: MorDice::Raw, condition: MorDice::Condition) {

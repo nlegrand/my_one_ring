@@ -2,6 +2,7 @@ pub mod dice {
 
     use std::fmt;
     use rand::Rng;
+    use std::collections::HashMap;
 
     #[derive(Debug, Clone, Copy)]
     pub enum FeatDice {
@@ -145,7 +146,7 @@ pub mod dice {
         pub outcome: i8,
         pub successes: i8,
     }
-    #[derive(Debug)]
+    #[derive(Debug, Clone)]
     pub struct Condition {
         pub weary: bool,
         pub miserable: bool,
@@ -259,5 +260,25 @@ pub mod dice {
 		},
 	    }
 	}
+        pub fn simulation(&self, condition: Condition) -> HashMap<String, u32> {
+            let mut outcome_list = HashMap::new();
+            for _i in 0..1000000 {
+                let outcome = self.roll();
+                let computed = outcome.compute(condition.clone());
+                if computed.automatic_failure {
+                    let count = outcome_list.entry("automatic failure".to_string()).or_insert(0);
+                    *count += 1 ;
+                }
+                else if computed.automatic_success {
+                    let count = outcome_list.entry("automatic success".to_string()).or_insert(0);
+                    *count += 1 ;
+                }
+                else {
+                    let count = outcome_list.entry(computed.outcome.to_string()).or_insert(0);
+                    *count += 1 ;
+                }
+            }
+            outcome_list
+        }
     }
 }
