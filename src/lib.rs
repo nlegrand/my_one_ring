@@ -2,20 +2,19 @@ pub mod dice {
 
     use std::fmt;
     use rand::Rng;
-    use std::collections::HashMap;
 
     #[derive(Debug, Clone, Copy)]
     pub enum FeatDice {
-        Number(i8),
+        Number(usize),
         GandalfRune,
         EyeofSauron,
     }
     impl FeatDice {
-        pub fn unpack_values(&self, miserable: bool) -> i8 {
+        pub fn unpack_values(&self) -> usize {
             match self {
                 FeatDice::Number(a) => *a,
-                FeatDice::GandalfRune => 40,
-                FeatDice::EyeofSauron => if miserable { 0 } else { -40 },
+                FeatDice::GandalfRune => 0,
+                FeatDice::EyeofSauron => 0,
             }
         }
     }
@@ -32,18 +31,18 @@ pub mod dice {
 
     #[derive(Debug, Clone, Copy)]
     pub enum SuccessDice {
-        OutlinedNumber(i8),
-        Number(i8),
+        OutlinedNumber(usize),
+        Number(usize),
         SuccessIcon,
     }
     impl SuccessDice {
-        pub fn successes(self) -> i8 {
+        pub fn successes(self) -> usize {
             match self {
                 SuccessDice::SuccessIcon => 1,
                 _ => 0,
             }
         }
-        pub fn value(&self, weary: bool) -> i8 {
+        pub fn value(&self, weary: bool) -> usize {
             match self {
                 SuccessDice::OutlinedNumber(a) => if weary { 0 } else { *a },
                 SuccessDice::Number(a) => *a,
@@ -95,7 +94,7 @@ pub mod dice {
     pub fn feat_dice() -> FeatDice {
         FEAT_DICE[rand::thread_rng().gen_range(0..=11)]
     }
-    pub fn dice_value(die: FeatDice) -> i8 {
+    pub fn dice_value(die: FeatDice) -> usize {
 	match die {
 	    FeatDice::Number(x) => x,
 	    FeatDice::GandalfRune => 100,
@@ -143,8 +142,8 @@ pub mod dice {
         pub automatic_success: bool, //could remove pub if pp where
  // defined as an impl of Computed and not in main.rs
         pub automatic_failure: bool,
-        pub outcome: i8,
-        pub successes: i8,
+        pub outcome: usize,
+        pub successes: usize,
     }
     #[derive(Debug, Clone)]
     pub struct Condition {
@@ -260,25 +259,33 @@ pub mod dice {
 		},
 	    }
 	}
-        pub fn simulation(&self, condition: Condition) -> HashMap<String, u32> {
-            let mut outcome_list = HashMap::new();
+        pub fn simulation(&self, condition: Condition) -> SimulationRow {
+            let mut simulation_row = SimulationRow {
+		automatic_successes: 0,
+		automatic_failures: 0,
+		result_count: [0;59],
+
+	    };
             for _i in 0..1000000 {
                 let outcome = self.roll();
                 let computed = outcome.compute(condition.clone());
                 if computed.automatic_failure {
-                    let count = outcome_list.entry("automatic failure".to_string()).or_insert(0);
-                    *count += 1 ;
+                    simulation_row.automatic_failures += 1 ;
                 }
                 else if computed.automatic_success {
-                    let count = outcome_list.entry("automatic success".to_string()).or_insert(0);
-                    *count += 1 ;
+                    simulation_row.automatic_successes += 1 ;
                 }
                 else {
-                    let count = outcome_list.entry(computed.outcome.to_string()).or_insert(0);
-                    *count += 1 ;
+                    simulation_row.result_count[computed.outcome] += 1 ;
                 }
             }
-            outcome_list
+            simulation_row
         }
+    }
+    #[derive(Debug)]
+    pub struct SimulationRow {
+	pub automatic_successes: u32,
+	pub automatic_failures: u32,
+	pub result_count: [u32; 59],
     }
 }
