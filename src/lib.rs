@@ -308,6 +308,18 @@ pub mod dice {
             println!("Cumulative results (automatic successes already counted in):");
             for (i, el) in self.result_count.iter().enumerate().rev() {
                 cumulative_res += el;
+                if i == 23 {
+                    println!("    {}: {} %", i, cumulative_res as f64 / 40000.0);
+                }
+                if i == 22 {
+                    println!("    {}: {} %", i, cumulative_res as f64 / 40000.0);
+                }
+                if i == 21 {
+                    println!("    {}: {} %", i, cumulative_res as f64 / 40000.0);
+                }
+                if i == 20 {
+                    println!("    {}: {} %", i, cumulative_res as f64 / 40000.0);
+                }
                 if i == 19 {
                     println!("    {}: {} %", i, cumulative_res as f64 / 40000.0);
                 }
