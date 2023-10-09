@@ -71,7 +71,10 @@ fn main() {
     };
     if cli.simulation {
         let sim_outcome = dp.simulation(condition);
-        println!("{:?}", sim_outcome);
+        if cfg!(debug_assertions) {
+            println!("{:?}", sim_outcome);
+        }
+        sim_outcome.pp();
     }
     else {
         let outcome = dp.roll();
