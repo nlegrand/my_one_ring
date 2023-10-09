@@ -267,7 +267,7 @@ pub mod dice {
                 successes_count: [0; 9],
 
 	    };
-            for _i in 0..1000000 {
+            for _i in 0..4000000 {
                 let outcome = self.roll();
                 let computed = outcome.compute(condition.clone());
                 if computed.automatic_failure {
@@ -294,52 +294,46 @@ pub mod dice {
 
     impl SimulationRow {
         pub fn pp(&self) {
-            println!("Automatic success: {} %", self.automatic_successes as f64 / 10000.0);
+            println!("Automatic successes: {} %", self.automatic_successes as f64 / 40000.0);
+            if self.automatic_failures > 0 {
+                println!("Automatic failures: {} %", self.automatic_failures as f64 / 40000.0);
+            }
             println!("Successes:");
             for (i, el) in self.successes_count.iter().enumerate() {
                 if *el > 0 {
-                    println!("    {}: {} %", i, *el as f64 / 10000.0);
+                    println!("    {}: {} %", i, *el as f64 / 40000.0);
                 }
             }
-            println!("Summed results:");
-            for (i, el) in self.result_count.iter().enumerate().rev() {
-                if *el > 0 {
-                    println!("    {}: {} %", i, *el as f64 / 10000.0);
-                }
-            }
-            let mut cumulative_res: u32 = 0;
-            println!("Cumulative results:");
+            let mut cumulative_res: u32 = self.automatic_successes;
+            println!("Cumulative results (automatic successes already counted in):");
             for (i, el) in self.result_count.iter().enumerate().rev() {
                 cumulative_res += el;
-                if i == 20 {
-                    println!("    {}: {} %", i, cumulative_res as f64 / 10000.0);
-                }
                 if i == 19 {
-                    println!("    {}: {} %", i, cumulative_res as f64 / 10000.0);
+                    println!("    {}: {} %", i, cumulative_res as f64 / 40000.0);
                 }
                 if i == 18 {
-                    println!("    {}: {} %", i, cumulative_res as f64 / 10000.0);
+                    println!("    {}: {} %", i, cumulative_res as f64 / 40000.0);
                 }
                 if i == 17 {
-                    println!("    {}: {} %", i, cumulative_res as f64 / 10000.0);
+                    println!("    {}: {} %", i, cumulative_res as f64 / 40000.0);
                 }
                 if i == 16 {
-                    println!("    {}: {} %", i, cumulative_res as f64 / 10000.0);
+                    println!("    {}: {} %", i, cumulative_res as f64 / 40000.0);
                 }
                 if i == 15 {
-                    println!("    {}: {} %", i, cumulative_res as f64 / 10000.0);
+                    println!("    {}: {} %", i, cumulative_res as f64 / 40000.0);
                 }
                 if i == 14 {
-                    println!("    {}: {} %", i, cumulative_res as f64 / 10000.0);
+                    println!("    {}: {} %", i, cumulative_res as f64 / 40000.0);
                 }
                 if i == 13 {
-                    println!("    {}: {} %", i, cumulative_res as f64 / 10000.0);
+                    println!("    {}: {} %", i, cumulative_res as f64 / 40000.0);
                 }
                 if i == 12 {
-                    println!("    {}: {} %", i, cumulative_res as f64 / 10000.0);
+                    println!("    {}: {} %", i, cumulative_res as f64 / 40000.0);
                 }
                 if i == 11 {
-                    println!("    {}: {} %", i, cumulative_res as f64 / 10000.0);
+                    println!("    {}: {} %", i, cumulative_res as f64 / 40000.0);
                 }
             }
         }
