@@ -51,7 +51,7 @@ fn main() {
 
 
     let condition = if cli.weary && cli.miserable {
-         MorDice::WEARY_AND_MISERABLE
+        MorDice::WEARY_AND_MISERABLE
     }
     else if cli.weary {
         MorDice::WEARY
@@ -66,8 +66,8 @@ fn main() {
         println!("DEBUG condition: {:?}", condition);
     }
     let dp = MorDice::DicePool {
-	feat_status: feat_status,
-	success_dice: sd,
+        feat_status: feat_status,
+        success_dice: sd,
     };
     if cli.simulation {
         let sim_outcome = dp.simulation(condition);
@@ -93,33 +93,33 @@ fn pp_outcome(outcome: MorDice::Raw, condition: MorDice::Condition) {
         println!("Condition: miserable");
     }
     match outcome.feat_status {
-	MorDice::FeatStatus::Normal => {
-	    println!("Feat dice: {}", outcome.feat_dice);
-	},
-	_ => {
-	    let o_feat_dice = match outcome.second_feat_dice {
-		Some(a) => a,
-		None => panic!("Favoured or ill-favoured roles should have a second feat dice"),
-	    };
-	    println!("Feat dice ({}): {}, {}", outcome.feat_status, outcome.feat_dice, o_feat_dice)
-	},
+        MorDice::FeatStatus::Normal => {
+            println!("Feat dice: {}", outcome.feat_dice);
+        },
+        _ => {
+            let o_feat_dice = match outcome.second_feat_dice {
+                Some(a) => a,
+                None => panic!("Favoured or ill-favoured roles should have a second feat dice"),
+            };
+            println!("Feat dice ({}): {}, {}", outcome.feat_status, outcome.feat_dice, o_feat_dice)
+        },
     }
     print!("Success dice: ");
     let mut success_dice = outcome.success_dice.clone().into_iter().peekable();
     while let Some(die) = success_dice.next()  {
-	if success_dice.peek().is_none() {
+        if success_dice.peek().is_none() {
             println!("{}.", die);
-	}
-	else {
-	    print!("{}, ", die);
-	}
+        }
+        else {
+            print!("{}, ", die);
+        }
     }
     let computed = outcome.compute(condition);
     if computed.automatic_success {
-	println!("Automatic success!!!");
+        println!("Automatic success!!!");
     }
     if computed.automatic_failure {
-	println!("Automatic failure!!!");
+        println!("Automatic failure!!!");
     }
     println!("The result is {} with {} success(es)", computed.outcome, computed.successes);
 }
