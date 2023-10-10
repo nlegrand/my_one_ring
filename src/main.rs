@@ -72,7 +72,9 @@ fn main() {
     if cli.simulation {
         let sim_outcome = dp.simulation(condition);
         if cfg!(debug_assertions) {
-            println!("{:?}", sim_outcome);
+            println!("DEBUG simulation: {:?}", sim_outcome);
+            println!("DEBUG simulation results array sum: {}", sim_outcome.result_count.iter().sum::<u32>() + sim_outcome.automatic_failures + sim_outcome.automatic_successes ) ;
+            println!("DEBUG simulation successes array sum: {}", sim_outcome.successes_count.iter().sum::<u32>());
         }
         sim_outcome.pp();
     }
