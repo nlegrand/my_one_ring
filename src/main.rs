@@ -26,7 +26,7 @@ struct Cli {
     #[arg(short, long, action = clap::ArgAction::SetTrue)]
     miserable: bool,
 
-    /// Simulate one million roll
+    /// Simulate four million roll
     #[arg(long, action = clap::ArgAction::SetTrue)]
     simulation: bool,
 }

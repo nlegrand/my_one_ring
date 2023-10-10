@@ -6,7 +6,7 @@ fun.
 My goals are to:
 
 - [X] make dice rolls from shell
-- [ ] benchmark dice pools results to simulate outcomes probabilities
+- [X] benchmark dice pools results to simulate outcomes probabilities
 - [ ] have a nice lib which could be used in other programms
 
 So far I really enjoy programming in Rust.
@@ -23,7 +23,7 @@ $ cargo install --path .
 * Usage
 
 #+begin_src shell
-$ my_one_ring --help
+$ my_one_ring --help    
 Usage: my_one_ring [OPTIONS] --success-dice <DICE>
 
 Options:
@@ -32,34 +32,63 @@ Options:
   -i, --ill-favoured         The roll is ill-favoured
   -w, --weary                The character is weary
   -m, --miserable            The character is miserable
+      --simulation           Simulate four million roll
   -h, --help                 Print help
   -V, --version              Print version
 #+end_src
 
 * Examples
 
+** Some rolls
+
 #+begin_src shell
-$ my_one_ring --success-dice 3
-Feat dice: 2
-Success dice: 1, 1, 4.
-The result is 8 with 0 success(es)
+  $ my_one_ring --success-dice 3
+  Feat dice: 2
+  Success dice: 1, 1, 4.
+  The result is 8 with 0 success(es)
 
-$ my_one_ring --success-dice 3 --favoured
-Feat dice (Favoured): 8, 4
-Success dice: 3, 4, 5.
-The result is 20 with 0 success(es)
+  $ my_one_ring --success-dice 3 --favoured
+  Feat dice (Favoured): 8, 4
+  Success dice: 3, 4, 5.
+  The result is 20 with 0 success(es)
 
-$ my_one_ring --success-dice 3 --ill-favoured --weary
-Condition: weary
-Feat dice (Ill favoured): 4, 3
-Success dice: 1, 2, 6 (Success icon).
-The result is 9 with 1 success(es)
+  $ my_one_ring --success-dice 3 --ill-favoured --weary
+  Condition: weary
+  Feat dice (Ill favoured): 4, 3
+  Success dice: 1, 2, 6 (Success icon).
+  The result is 9 with 1 success(es)
 
-$ my_one_ring --success-dice 6 --ill-favoured --weary --miserable
-Condition: weary
-Condition: miserable
-Feat dice (Ill favoured): Eye of Sauron, 3
-Success dice: 1, 5, 6 (Success icon), 2, 1, 6 (Success icon).
-Automatic failure!!!
-The result is 17 with 2 success(es)
+  $ my_one_ring --success-dice 6 --ill-favoured --weary --miserable
+  Condition: weary
+  Condition: miserable
+  Feat dice (Ill favoured): Eye of Sauron, 3
+  Success dice: 1, 5, 6 (Success icon), 2, 1, 6 (Success icon).
+  Automatic failure!!!
+  The result is 17 with 2 success(es)
+#+end_src
+
+** Rolls simulation to get outcome probabilities
+
+#+begin_src shell
+  $ my_one_ring --success-dice 3 --simulation
+Automatic successes: 8.326525 %
+Successes:
+    0: 57.859725 %
+    1: 34.74185 %
+    2: 6.936375 %
+    3: 0.46205 %
+Cumulative results (automatic successes already counted in):
+    23: 13.194475 %
+    22: 16.312875 %
+    21: 20.492875 %
+    20: 25.692975 %
+    19: 31.861975 %
+    18: 38.8342 %
+    17: 46.351675 %
+    16: 54.1348 %
+    15: 61.9342 %
+    14: 69.458475 %
+    13: 76.44645 %
+    12: 82.628675 %
+    11: 87.846075 %
 #+end_src
